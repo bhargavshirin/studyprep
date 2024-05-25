@@ -4,6 +4,7 @@ import { getAuth, createUserWithEmailAndPassword, Auth } from 'firebase/auth';
 import { app } from '../firebase/Config';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Spinner from '../components/spinner';
 
 interface LoginPageState {
   email: string;
@@ -23,6 +24,7 @@ const SignupPage: React.FC = () => {
     authInitialized: false,
     auth: null,
   });
+  const [loading, setLoading] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -50,6 +52,7 @@ const SignupPage: React.FC = () => {
   };
 
   const handleSignUp = async () => {
+    setLoading(true);
     const { email, password, auth } = state;
     try {
       if (auth) {
@@ -67,6 +70,8 @@ const SignupPage: React.FC = () => {
         ...prevState,
         error: 'Email already exists / Error signing up',
       }));
+    }finally {  
+      setLoading(false);
     }
   };
 
@@ -76,7 +81,7 @@ const SignupPage: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center h-screen">
-      <div className="rounded-3xl w-full max-w-md p-6 bg-white rounded-md shadow-md">
+      <div className="rounded-3xl w-full max-w-md p-6 bg-white  shadow-md">
         <h1 className="text-3xl font-bold mb-6 text-black">Signup</h1>
         <form className="mb-4">
           <div className="mb-4">
@@ -117,7 +122,7 @@ const SignupPage: React.FC = () => {
           onClick={handleSignUp}
           className="w-full bg-black text-white py-2 rounded-md"
         >
-          Sign Up
+          {loading ? <Spinner /> : 'Signup with Email'}
         </button>
       </div>
     </div>

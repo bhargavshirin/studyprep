@@ -5,6 +5,7 @@ import { sendPasswordResetEmail } from 'firebase/auth';
 import { app } from '../firebase/Config';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Spinner from '../components/spinner';
 
 const LoginPage: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -14,6 +15,7 @@ const LoginPage: React.FC = () => {
   const [error, setError] = useState<string>('');
   const [resetEmailSent, setResetEmailSent] = useState<boolean>(false);
   const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     const authInstance = getAuth(app);
@@ -30,6 +32,7 @@ const LoginPage: React.FC = () => {
   };
 
   const handleEmailLogin = async (): Promise<void> => {
+    setLoading(true);
     try {
       if (!auth) return;
       await signInWithEmailAndPassword(auth, email, password);
@@ -41,10 +44,13 @@ const LoginPage: React.FC = () => {
       } else {
         setError('Error signing in with email');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleForgotPassword = async (): Promise<void> => {
+    setLoading(true);
     try {
       if (!email) {
         setError('Please enter your email address.');
@@ -56,6 +62,8 @@ const LoginPage: React.FC = () => {
       setError('');
     } catch (error) {
       setError('Error sending reset email. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,7 +116,7 @@ const LoginPage: React.FC = () => {
               onClick={handleEmailLogin}
               className="w-full bg-black text-white py-2 rounded-md"
             >
-              Login with Email
+              {loading ? <Spinner /> : 'Login with Email'}
             </button>
           </form>
           {resetEmailSent ? (
