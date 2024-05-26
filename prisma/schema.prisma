@@ -20,4 +20,14 @@ model User {
   profilePicture String
   role String @default("user")	
   createdAt DateTime @default(now())
+  resources resource[]
+}
+model resource{
+  id Int @id @default(autoincrement())
+  title String
+  description String
+  link String
+  createdAt DateTime @default(now())
+  userId Int
+  user User @relation(fields: [userId], references: [id])
 }

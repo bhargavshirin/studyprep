@@ -1,3 +1,6 @@
+import { NextRequest, NextResponse } from "next/server";
+import jwt from "jsonwebtoken";
+
 export async function googleOAuthGetUserEmail(
   token: string
 ): Promise<[string, string, string, boolean]> {
@@ -23,4 +26,17 @@ export async function googleOAuthGetUserEmail(
     console.log(e);
   }
   return ["", "", "", false];
+}
+export async function Authorizer(req: NextRequest) {
+    let token = req.headers.get("Authorization");
+    let accessToken = token?.replace("Bearer ", "");
+    if (accessToken) {
+        let decoded: any = jwt.verify(accessToken, "secret");
+        console.log("decoded", decoded);
+        return NextResponse.next();
+    }
+    return NextResponse.json({
+        status: "failed",
+        message: "Unauthorized",
+    });
 }
