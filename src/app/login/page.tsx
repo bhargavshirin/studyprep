@@ -68,18 +68,25 @@ const LoginPage: React.FC = () => {
   };
 
   if (!authInitialized) {
-    return <div>Loading...</div>;
+    return <div className='w-screen h-screen flex items-center justify-center'><Spinner/></div>;
   }
   
   return (
     <>
       <div className="flex items-center justify-center h-screen">
         <div className="rounded-3xl  w-full max-w-md p-6 bg-white rounded-md shadow-md">
-          <h1 className="text-3xl font-bold mb-6 text-black">Login</h1>
+          <div className="flex justify-between">
+            <h1 className="text-3xl font-bold mb-6 text-black">Signup</h1>
+            <Link href="/" className="text-gray-600 text-sm">
+              Home
+            </Link>
+          </div>
 
           <form className="mb-4">
             <div className="mb-4">
-              <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
+              <label
+                htmlFor="email"
+                className="block text-gray-700 text-sm font-bold mb-2">
                 Email
               </label>
               <input
@@ -93,7 +100,9 @@ const LoginPage: React.FC = () => {
               />
             </div>
             <div className="mb-4">
-              <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
+              <label
+                htmlFor="password"
+                className="block text-gray-700 text-sm font-bold mb-2">
                 Password
               </label>
               <input
@@ -106,17 +115,12 @@ const LoginPage: React.FC = () => {
                 required
               />
             </div>
-            {
-              error && (
-                <div className="text-red-500 text-sm mb-2">{error}</div>
-              )
-            }
+            {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
             <button
               type="button"
               onClick={handleEmailLogin}
-              className="w-full bg-black text-white py-2 rounded-md"
-            >
-              {loading ? <Spinner /> : 'Login with Email'}
+              className="w-full bg-black text-white py-2 rounded-md">
+              {loading ? <Spinner /> : "Login with Email"}
             </button>
           </form>
           {resetEmailSent ? (
@@ -127,14 +131,15 @@ const LoginPage: React.FC = () => {
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="text-grey-600 text-sm mb-1"
-            >
+              className="text-grey-600 text-sm mb-1">
               Forgot password? Reset here
             </button>
           )}
 
           <Link href="/signup">
-          <p className="text-gray-600 text-sm mb-2">Don't have an account? Signup</p>
+            <p className="text-gray-600 text-sm mb-2">
+              Don't have an account? Signup
+            </p>
           </Link>
         </div>
       </div>
