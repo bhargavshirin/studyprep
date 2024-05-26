@@ -94,7 +94,7 @@ export default function Component() {
     </div>
       </main>
       <footer className="bg-black text-white py-4 px-6 md:px-8 text-center">
-        <p>© 2023 Student Doubt Forum. All rights reserved.</p>
+        <p>© 2024 G-Stacks. All Rights reserved</p>
       </footer>
     </div>
   );
