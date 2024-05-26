@@ -1,19 +1,16 @@
+
 'use client';
-import React, { useState, useEffect, ChangeEvent } from 'react';
-import { getAuth, signInWithEmailAndPassword,Auth, AuthError } from 'firebase/auth';
-import { sendPasswordResetEmail } from 'firebase/auth';
+import React, { useState, useEffect } from 'react';
+import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth';
 import { app } from '../firebase/Config';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Spinner from '../components/spinner';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
   const [authInitialized, setAuthInitialized] = useState<boolean>(false);
-  const [auth, setAuth] = useState<Auth | null>(null);
+  const [auth, setAuth] = useState<ReturnType<typeof getAuth> | null>(null);
   const [error, setError] = useState<string>('');
-  const [resetEmailSent, setResetEmailSent] = useState<boolean>(false);
   const router = useRouter();
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -23,45 +20,15 @@ const LoginPage: React.FC = () => {
     setAuthInitialized(true);
   }, []);
 
-  const handleEmailChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value);
-  };
-
-  const handlePasswordChange = (e: ChangeEvent<HTMLInputElement>): void => {
-    setPassword(e.target.value);
-  };
-
-  const handleEmailLogin = async (): Promise<void> => {
+  const handleGoogleLogin = async (): Promise<void> => {
     setLoading(true);
     try {
       if (!auth) return;
-      await signInWithEmailAndPassword(auth, email, password);
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
       router.push('/');
     } catch (error) {
-      const authError = error as AuthError;
-      if (authError.code === 'auth/wrong-password' || authError.code === 'auth/user-not-found') {
-        setError('Invalid email or password. Please try again.');
-      } else {
-        setError('Error signing in with email');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleForgotPassword = async (): Promise<void> => {
-    setLoading(true);
-    try {
-      if (!email) {
-        setError('Please enter your email address.');
-        return;
-      }
-      if (!auth) return;
-      await sendPasswordResetEmail(auth, email);
-      setResetEmailSent(true);
-      setError('');
-    } catch (error) {
-      setError('Error sending reset email. Please try again.');
+      setError('Error signing in with Google');
     } finally {
       setLoading(false);
     }
@@ -74,70 +41,24 @@ const LoginPage: React.FC = () => {
   return (
     <>
       <div className="flex items-center justify-center h-screen">
-        <div className="rounded-3xl  w-full max-w-md p-6 bg-white rounded-md shadow-md">
+        <div className="rounded-3xl w-full max-w-md p-6 bg-white rounded-md shadow-md">
           <div className="flex justify-between">
-            <h1 className="text-3xl font-bold mb-6 text-black">Signup</h1>
+            <h1 className="text-3xl font-bold mb-6 text-black">Login</h1>
             <Link href="/" className="text-gray-600 text-sm">
               Home
             </Link>
           </div>
-
-          <form className="mb-4">
-            <div className="mb-4">
-              <label
-                htmlFor="email"
-                className="block text-gray-700 text-sm font-bold mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={email}
-                onChange={handleEmailChange}
-                className="w-full border rounded-md py-2 px-3"
-                required
-              />
-            </div>
-            <div className="mb-4">
-              <label
-                htmlFor="password"
-                className="block text-gray-700 text-sm font-bold mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                value={password}
-                onChange={handlePasswordChange}
-                className="w-full border rounded-md py-2 px-3"
-                required
-              />
-            </div>
-            {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
-            <button
-              type="button"
-              onClick={handleEmailLogin}
-              className="w-full bg-black text-white py-2 rounded-md">
-              {loading ? <Spinner /> : "Login with Email"}
-            </button>
-          </form>
-          {resetEmailSent ? (
-            <div className="text-green-600 text-sm mb-2">
-              Password reset email sent. Check your email for instructions.
-            </div>
-          ) : (
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="text-grey-600 text-sm mb-1">
-              Forgot password? Reset here
-            </button>
-          )}
+          
+          {error && <div className="text-red-500 text-sm mb-2">{error}</div>}
+          <button
+            type="button"
+            onClick={handleGoogleLogin}
+            className="w-full bg-black text-white py-2 rounded-md">
+            {loading ? <Spinner /> : "Login with Google"}
+          </button>
 
           <Link href="/signup">
-            <p className="text-gray-600 text-sm mb-2">
+            <p className="text-gray-600 text-sm mt-4">
               Don't have an account? Signup
             </p>
           </Link>
