@@ -8,7 +8,7 @@ import FeaturesBlocks from "./components/FeaturesBlocks";
 
 export default function Home() {
   const { user } = useAuth();
-  console.log("user", user);
+  console.log("user", user?.email);
   return (
     <div className="min-h-screen w-screen overflow-hidden flex flex-col items-center justify-center">
       <Hero />
